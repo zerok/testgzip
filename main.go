@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/wsxiaoys/terminal/color"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -20,13 +21,22 @@ func main() {
 	var quiet bool = false
 	var result bool = true
 
+	flag.Usage = func() {
+		fmt.Printf("Usage: testgzip [options] URL+\n\nOptions:\n")
+		flag.PrintDefaults()
+	}
 	flag.BoolVar(&quiet, "quiet", false, "Disables any output and limits the status to the exit code")
 	flag.Parse()
+
+	if 0 == len(flag.Args()) {
+		fmt.Println("You have to provide at least one URL to be tested.")
+		os.Exit(2)
+	}
 
 	// First, let's make sure that all passed arguments are actually valid URLs.
 	for _, url_ := range flag.Args() {
 		if !isUrl(url_) {
-			fmt.Errorf("%s is not a valid URL\n", url_)
+			fmt.Printf("%s is not a valid URL\n", url_)
 			os.Exit(1)
 			return
 		}
@@ -77,14 +87,14 @@ func testUrl(url string, result chan CheckResult) {
 	client := http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		fmt.Errorf("Failed to generate new request")
+		log.Println("Failed to generate new request")
 		result <- CheckResult{url, false, true}
 		return
 	}
 	req.Header.Add("Accept-Encoding", "gzip,deflate")
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Errorf("Request failed: %s", err)
+		log.Println("Request failed: %s", err)
 		result <- CheckResult{url, false, true}
 		return
 	}
