@@ -11,3 +11,5 @@ each server responded.
 which I ported some of my rather old helper scripts from Python, Ruby, Bash,
 etc. to Go. Because of that I tried to cram as much stuff as possible into
 this which normally perhaps wouldn't necessarily make sense.
+
+[![baby-gopher](https://raw2.github.com/drnic/babygopher-site/gh-pages/images/babygopher-badge.png)](http://www.babygopher.org)
